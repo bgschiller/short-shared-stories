@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="story-detail">
+  {% for word in story.words %}
+    <span class="word">{{ word }}</span>
+  {% endfor %}
+  {% if not story.is_complete %}
+    <div class="incomplete-story">(the story continues...)</div>
+  {% endif %}
+</main>
+{% endblock content %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ header }}</h1>
+  {% if error_writing_story %}
+    <p class="error">
+      Something went wrong writing that story. Perhaps your time had run out?
+    </p>
+  {% elif story_not_found %}
+    <p class="error">
+      Couldn't find that story. Perhaps one of these will suite you?
+    </p>
+  {% endif %}
+  <main class="story-list">
+    <ul class="stories">
+      {% for story in stories %}
+        <li class="story">
+          <a class="permalink" href="/story/{{ story.story_id }}">§</a>
+          {% for word in story.words %}
+            <span class="word">{{ word }}</span>
+          {% endfor %}
+        </li>
+      {% else %}
+        <p>No stories yet... Care to <a href="/write">write one</a>?</p>
+      {% endfor %}
+    </ul>
+  </main>
+{% endblock content %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if invalid_word_error %}
+<p class="error">
+  An invalid choice of word.
+</p>
+{% endif %}
+<main class="write">
+  <span class="remaining-words">{{ story.num_words - len(story.words) }} words remain</span>
+  <form action="/write/{{ story.story_id }}" method="POST">
+    {% for word in story.words %}
+      <span class="word">{{ word }}</span>
+    {% else %}
+      <span class="story-start-instructions">How does this story start?</span>
+    {% endfor %}
+    <input type="text" name="word" />
+    <input type="submit" />
+  </form>
+</main>
+{% endblock content %}

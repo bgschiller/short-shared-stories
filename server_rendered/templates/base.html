@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      {% block title %}
+        Short Shared Stories
+      {% endblock title %}
+    </title>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/">Recent Stories</a></li>
+        <li><a href="/yours">Your stories</a></li>
+        <li><a href="/write">Write</a></li>
+      </ul>
+      <h2 class="site-title">Short Shared Stories</h2>
+    </nav>
+    {% block content %}
+    {% endblock content %}
+  </body>
+</html>
