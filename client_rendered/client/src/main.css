@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans|Noto+Serif+KR');
+
 body {
   width: 90vw;
   max-width: 800px;
@@ -7,6 +9,12 @@ body {
 nav {
   display: flex;
   justify-content: space-between;
+}
+
+.router-link-exact-active {
+  text-decoration: none;
+  color: black;
+  cursor: default;
 }
 
 nav, h1 {
@@ -42,6 +50,7 @@ li.story {
   margin-right: 10px;
   text-decoration: none;
 }
+
 .permalink:hover {
   color: #777777;
 }
@@ -68,3 +77,4 @@ main {
 .story-detail, .write {
   margin-top: 30px;
 }
+
