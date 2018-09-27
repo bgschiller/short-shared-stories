@@ -54,8 +54,15 @@ def lease_story_for_contribution(user_id):
         FROM story s
         JOIN fragment f ON (f.story_id = s.id)
         GROUP BY s.id
-        HAVING s.num_words < COUNT(f.id)
-           AND NOT (:user_id = ANY(ARRAY_AGG(f.created_by)))
+        HAVING
+          -- story is incomplete
+            s.num_words > COUNT(f.id)
+          -- logged in user was not most recent contributor
+           AND :user_id <> (ARRAY_AGG(f.created_by))[
+               array_upper(ARRAY_AGG(f.created_by), 1)
+            ]
+          -- no outstanding lease on this story
+           AND BOOL_AND(f.word IS NOT NULL)
         """,
         { 'user_id': user_id }).scalar()
     if story_id:
@@ -78,9 +85,22 @@ def clear_out_expired_leases():
         '''
         DELETE FROM fragment
         WHERE word IS NULL
-          AND created_at + interval '{} second' < CURRENT_TIMESTAMP
+        -- necessary to cast CURRENT_TIMESTAMP to timestamp because
+        -- CURRENT_TIMESTAMP is a TIMESTAMP WITH TIMEZONE, and our created_at
+        -- column is stored without timezone.
+          AND created_at + interval '{} second' < CURRENT_TIMESTAMP::timestamp
         '''.format(EXPIRY_IN_SECONDS)
     )
+    db.session.commit()
+    db.session.execute(
+        '''
+        DELETE FROM story
+        WHERE NOT id = ANY(
+            SELECT story_id FROM fragment
+        )
+        '''
+    )
+    db.session.commit()
 
 # sentinel objects to be returned on error
 FragmentNotFound = object()
@@ -107,6 +127,7 @@ def add_word(story_id, user_id, word):
         # something went wrong.
         # perhaps the fragment doesn't exist, or perhaps it's expired.
         return FragmentNotFound
+    db.session.commit()
     return None
 
 StoryNotFound = object()
@@ -127,10 +148,12 @@ def recently_completed_stories():
             , JSON_AGG(f.word) AS words
             , MAX(f.created_at) AS last_edit
             , s.num_words
+            , TRUE as is_complete
         FROM story s
         JOIN fragment f ON (f.story_id = s.id)
         GROUP BY s.id
         HAVING s.num_words = COUNT(f.id)
+           AND BOOL_AND(f.word IS NOT NULL)
         ORDER BY MAX(f.created_at)
         LIMIT 20
         ''').fetchall()
@@ -141,6 +164,7 @@ def retrieve_stories_by_user_id(user_id):
             , JSON_AGG(f.word) AS words
             , MAX(f.created_at) AS last_edit
             , s.num_words
+            , COUNT(f.word) = s.num_words AS is_complete
         FROM story s
         JOIN fragment f ON (f.story_id = s.id)
         WHERE s.id = ANY(
@@ -148,6 +172,7 @@ def retrieve_stories_by_user_id(user_id):
             WHERE created_by = :user_id
         )
         GROUP BY s.id
+        HAVING BOOL_AND(f.word IS NOT NULL)
         ORDER BY MAX(f.created_at)
     ''', { 'user_id': user_id },
     ).fetchall()

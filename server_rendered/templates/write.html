@@ -7,7 +7,7 @@
 </p>
 {% endif %}
 <main class="write">
-  <span class="remaining-words">{{ story.num_words - len(story.words) }} words remain</span>
+  <div class="remaining-words">{{ remaining_words_phrase }}</div>
   <form action="/write/{{ story.story_id }}" method="POST">
     {% for word in story.words %}
       <span class="word">{{ word }}</span>

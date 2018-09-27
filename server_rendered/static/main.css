@@ -1,0 +1,62 @@
+body {
+  width: 90vw;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+}
+
+nav, h1 {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+nav ul {
+  display: flex;
+  align-content: space-around;
+}
+
+ul {
+  list-style: none;
+}
+
+nav ul li {
+  margin-right: 10px;
+}
+
+.story, .word {
+  font-family: 'Noto Serif KR', serif;
+}
+
+.remaining-words {
+  margin-bottom: 10px;
+}
+
+li.story {
+  margin-bottom: 40px;
+}
+.permalink {
+  color: #aaa;
+  margin-right: 10px;
+  text-decoration: none;
+}
+.permalink:hover {
+  color: #777777;
+}
+
+main {
+  width: 80vw;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.remaining-words,
+.incomplete-story {
+  color: #9a9a9a9a;
+}
+
+.incomplete-story {
+  margin-left: 10px;
+}

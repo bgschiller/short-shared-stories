@@ -5,7 +5,10 @@ from actions import (
     get_user_id, add_word, FragmentNotFound,
     retrieve_story_by_id, StoryNotFound,
     retrieve_stories_by_user_id, InvalidWord,
+    clear_out_expired_leases,
 )
+
+app.before_request(clear_out_expired_leases)
 
 @app.route('/')
 def index():
@@ -32,9 +35,15 @@ def write():
     user_id = get_user_id(session)
     leased_story = lease_story_for_contribution(user_id)
     invalid_word_error = request.args.get('invalid_word_error')
+    remaining_words = leased_story['num_words'] - len(leased_story['words'])
+    remaining_words_phrase = (
+        '{} words remain'.format(remaining_words) if remaining_words > 1 else
+        '1 word remains'
+    )
     return render_template(
         'write.html',
         story=leased_story,
+        remaining_words_phrase=remaining_words_phrase,
         invalid_word_error=invalid_word_error,
     )
 

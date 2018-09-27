@@ -19,6 +19,9 @@
           {% for word in story.words %}
             <span class="word">{{ word }}</span>
           {% endfor %}
+          {% if not story.is_complete %}
+            <div class="incomplete-story">(the story continues...)</div>
+          {% endif %}
         </li>
       {% else %}
         <p>No stories yet... Care to <a href="/write">write one</a>?</p>
