@@ -11,20 +11,20 @@ from actions import (
 app.before_request(clear_out_expired_leases)
 
 @app.route('/api/recent_stories')
-def recent_stories():
+def api_recent_stories():
     recent_stories = recently_completed_stories()
     return jsonify(recent_stories)
 
 @app.route('/api/your_stories')
-def your_stories():
+def api_your_stories():
     return jsonify(retrieve_stories_by_user_id(get_user_id(session)))
 
 @app.route('/api/story')
-def write():
+def api_write():
     return jsonify(lease_story_for_contribution(get_user_id(session)))
 
 @app.route('/api/story/<int:story_id>', methods=['POST'])
-def submit_word(story_id):
+def api_submit_word(story_id):
     data = request.get_json()
     result = add_word(story_id, get_user_id(session), data['word'])
     if result is FragmentNotFound:
@@ -34,7 +34,7 @@ def submit_word(story_id):
     return jsonify({ 'status': 'success' })
 
 @app.route('/api/story/<int:story_id>')
-def get_story(story_id):
+def api_get_story(story_id):
     story = retrieve_story_by_id(story_id)
     if story is StoryNotFound:
         return jsonify({ 'error': 'StoryNotFound' }), 404
