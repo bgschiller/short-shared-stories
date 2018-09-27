@@ -11,7 +11,7 @@ Make sure you have Python 3.7, pipenv, and postgres installed. Navigate to this 
 
 Make a postgres database called `short_shared_stories`. Run `pipenv shell` to get access to the virtual environment, then `python create_db.py` to make the tables.
 
-Now you can run the app with `python main.py`.
+Now you can run the app with `python application.py`.
 
 Access the server-rendered app at localhost:5000
 
